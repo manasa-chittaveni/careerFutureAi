@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 
 from .schemas import CandidateRequest
-
 from ..predictor import predict_all_roles
 from ..skill_gap import calculate_skill_gaps
 
@@ -13,9 +12,19 @@ app = FastAPI(
 )
 
 
+@app.get("/")
+def root():
+    return {
+        "message": "Welcome to CareerFuture AI",
+        "status": "online",
+        "docs": "/docs",
+        "health": "/health",
+        "predict": "/predict"
+    }
+
+
 @app.get("/health")
 def health():
-
     return {
         "status": "healthy",
         "service": "CareerFuture AI",
@@ -31,7 +40,6 @@ def predict(candidate: CandidateRequest):
     predictions = predict_all_roles(data)
 
     for role in predictions:
-
         predictions[role]["skill_gaps"] = calculate_skill_gaps(
             data,
             role
